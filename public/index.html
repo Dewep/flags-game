@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Flags</title>
+  <link href="main.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <div id="game">
+      <div class="fixed">
+        <img :src="'/png/' + country.code + '.png'" :title="country.code">
+
+        <p>
+          <b>Score: {{ score }}</b><br>
+          <em v-for="(s, index) in scores" :class="[s < 0 ? 'error' : 'success']">{{ s > 0 ? '+' : '' }}{{ s }}</em>
+        </p>
+
+        <input
+          v-model="query"
+          autofocus
+          placeholder="Filter countries, enter to submit, up/down to move"
+          @keyup.enter="enter()"
+          @keydown.down.stop.prevent="selectionIndex += 1"
+          @keydown.up.stop.prevent="selectionIndex -= 1"
+        >
+      </div>
+
+      <div class="scrollable">
+        <p v-for="(c, index) in filteredPossibilities" :key="c.code">
+          <a :class="{ selected: index === selectionIndex }" @click="select(c.code)">{{ c.fr }}<i>{{ c.en }}</i></a>
+        </p>
+      </div>
+
+      <div v-if="mapCountry" id="map-info">
+        <img :src="'/png/' + mapCountry.code + '.png'">
+        <b>{{ mapCountry.fr }} ({{ mapCountry.code }})</b><br>
+        <i>{{ mapCountry.en }}</i>
+      </div>
+    </div>
+
+    <div id="map-container"></div>
+  </div>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
