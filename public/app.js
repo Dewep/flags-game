@@ -118,7 +118,7 @@ function colorCountry(countryCode, color = 'orange') {
 }
 
 // https://hampusborgos.github.io/country-flags/
-const countries = [
+const countryDefinitions = [
   {code:"AD",en:"Andorra",fr:"Andorre"},
   {code:"AE",en:"United Arab Emirates",fr:"Émirats arabes unis"},
   {code:"AF",en:"Afghanistan",fr:"Afghanistan"},
@@ -376,6 +376,13 @@ const countries = [
   {code:"ZW",en:"Zimbabwe",fr:"Zimbabwe"}
 ]
 
+const countries = countryDefinitions.map((c) => ({
+  ...c,
+  code: c.code.toLowerCase(),
+  query: normalizeStr(c.fr + ' ' + c.en),
+  weight: 1,
+}))
+
 const { createApp, ref, computed, watch } = Vue
 
 function shuffleArray(array) {
@@ -391,32 +398,24 @@ function normalizeStr(str) {
 
 function setup() {
   const hardMode = ref(true)
-  const selectionIndex = ref(0)
   const score = ref(0)
   const scores = ref([])
-
-  const nextIndexes = ref([])
 
   const index = ref(0)
 
   const query = ref('')
+  const selectionIndex = ref(0)
 
   const mapCountry = ref(null)
 
-  const allCountries = computed(() => countries.map(c => ({
-    ...c,
-    code: c.code.toLowerCase(),
-    query: normalizeStr(c.fr + ' ' + c.en),
-  })))
-
   const country = computed(() => {
-    return allCountries.value[index.value]
+    return countries[index.value]
   })
 
   const possibilities = computed(() => {
-    const list = hardMode.value ? [...allCountries.value] : [country.value]
+    const list = hardMode.value ? [...countries] : [country.value]
     while (list.length < 10) {
-      const randCountry = allCountries.value[Math.floor(Math.random() * allCountries.value.length)]
+      const randCountry = countries[Math.floor(Math.random() * countries.length)]
       if (!list.some(c => c.code === randCountry.code)) {
         list.push(randCountry)
       }
@@ -449,14 +448,24 @@ function setup() {
     }
   }
 
-  const reset = () => {
-    if (nextIndexes.value.length < 50) {
-      const newNextIndexes = [...nextIndexes.value, ...Array.from(Array(allCountries.value.length).keys())]
-      shuffleArray(newNextIndexes)
-      nextIndexes.value = newNextIndexes
+  const getRandomCountryIndex = () => {
+    const cumulativeWeights = [];
+    for (let i = 0; i < countries.length; i++) {
+      cumulativeWeights[i] = countries[i].weight + (cumulativeWeights[i - 1] || 0);
     }
+    const random = cumulativeWeights[cumulativeWeights.length - 1] * Math.random()
 
-    index.value = nextIndexes.value.pop()
+    for (let i = 0; i < countries.length; i++) {
+      if (cumulativeWeights[i] < random) {
+        continue
+      }
+
+      return i
+    }
+  }
+
+  const reset = () => {
+    index.value = getRandomCountryIndex()
     query.value = ''
     selectionIndex.value = 0
     hardMode.value = true
@@ -472,12 +481,17 @@ function setup() {
       hardMode.value = false
       query.value = ''
       updateScore(-1)
+      countries[index.value].weight += 1
       return
     }
     if (error) {
       updateScore(-3)
+      countries[index.value].weight += 1
     } else if (hardMode.value) {
       updateScore(2)
+      if (countries[index.value].weight > 1) {
+        countries[index.value].weight -= 1
+      }
     } else {
       updateScore(1)
     }
