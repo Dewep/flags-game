@@ -380,7 +380,7 @@ const countries = countryDefinitions.map((c) => ({
   ...c,
   code: c.code.toLowerCase(),
   query: normalizeStr(c.fr + ' ' + c.en),
-  weight: 1,
+  weight: 3,
 }))
 
 const { createApp, ref, computed, watch } = Vue
