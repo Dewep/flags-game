@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Flags</title>
-  <link href="main.css" rel="stylesheet">
+  <link href="main.css?version=241025" rel="stylesheet">
   <link rel="icon" href="/favicon.png" type="image/png">
 </head>
 <body>
   <div id="app">
     <div id="game">
       <div class="fixed">
-        <img :src="'/png/' + country.code + '.png'" :title="country.code">
+        <img :src="'/png/' + country.code + '.png?version=241025'" :title="country.code">
 
         <p>
           <b>Score: {{ score }}</b><br>
@@ -35,7 +35,7 @@
       </div>
 
       <div v-if="mapCountry" id="map-info">
-        <img :src="'/png/' + mapCountry.code + '.png'">
+        <img :src="'/png/' + mapCountry.code + '.png?version=241025'">
         <b>{{ mapCountry.fr }} ({{ mapCountry.code }})</b><br>
         <i>{{ mapCountry.en }}</i>
       </div>
@@ -44,6 +44,6 @@
     <div id="map-container"></div>
   </div>
   <script src="vue.global.prod.min.js?version=3.5.12"></script>
-  <script src="app.js"></script>
+  <script src="app.js?version=241025"></script>
 </body>
 </html>
