@@ -7,10 +7,8 @@ fetch('world.svg')
   .then(svgData => {
     svgContainer = document.getElementById('map-container');
     svgContainer.innerHTML = svgData;
-    // addCountryClickEvents();
     svgElement = svgContainer.querySelector('svg')
     addZoomAndPanFunctionality(svgElement);
-    // colorCountry('fr');
   });
 
 function addZoomAndPanFunctionality(svgElement) {
@@ -435,9 +433,12 @@ function setup() {
     if (selectionIndex.value >= filteredPossibilities.value.length) {
       selectionIndex.value = filteredPossibilities.value.length - 1
     }
+
     if (selectionIndex.value < 0) {
       selectionIndex.value = 0
     }
+
+    document.getElementsByClassName('scrollable')[0].children.item(selectionIndex.value)?.scrollIntoView({ block: 'nearest' })
   })
 
   const updateScore = (offset) => {
