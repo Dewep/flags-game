@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
   <title>Flags</title>
   <link href="main.css?version=241025" rel="stylesheet">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -10,6 +10,12 @@
 <body>
   <div id="app">
     <div id="game">
+      <div v-if="mapCountry" id="map-info">
+        <img :src="'/png/' + mapCountry.code + '.png?version=241025'">
+        <b>{{ mapCountry.fr }} ({{ mapCountry.code }})</b><br>
+        <i>{{ mapCountry.en }}</i>
+      </div>
+
       <div class="fixed">
         <img :src="'/png/' + country.code + '.png?version=241025'" :title="country.code">
 
@@ -32,12 +38,6 @@
         <p v-for="(c, index) in filteredPossibilities" :key="c.code">
           <a :class="{ selected: index === selectionIndex }" @click="select(c.code)">{{ c.fr }}<i>{{ c.en }}</i></a>
         </p>
-      </div>
-
-      <div v-if="mapCountry" id="map-info">
-        <img :src="'/png/' + mapCountry.code + '.png?version=241025'">
-        <b>{{ mapCountry.fr }} ({{ mapCountry.code }})</b><br>
-        <i>{{ mapCountry.en }}</i>
       </div>
     </div>
 
